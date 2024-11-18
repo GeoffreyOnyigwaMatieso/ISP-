@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISP Rate Card</title>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css">
+    
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Styling the input fields to make room for icons */
+        .input-group {
+            position: relative;
+            width: 100%;
+        }
+        
+        input[type="text"], input[type="number"], input[type="email"], input[type="tel"], input[type="password"] {
+            padding-right: 40px; /* Add padding to the right for icon space */
+        }
+        
+        .key-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+        }
+        
+        .card-input-wrapper {
+            position: relative;
+        }
+        
+        .card-icons img {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+        
+        /* Ensuring the icons are placed correctly */
+        .card-details-row .input-group {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Section -->
+        <div class="left-section">
+            <h2 style="text-align: left;">ISP Rate Card</h2>
+            
+            <form id="rateCardForm">
+                <!-- Item Dropdown -->
+                <label for="item">Item</label>
+                <select id="item" required>
+                    <option value="" disabled selected>Select an option</option>
+                    <option value="member_individual">Member (Individual)</option>
+                    <option value="epn_individual">EPN (Individual)</option>
+                    <option value="member_fellow">Member Fellow</option>
+                    <option value="corporate_small">Corporate Membership (Small)</option>
+                    <option value="corporate_medium">Corporate Membership (Medium)</option>
+                    <option value="corporate_large">Corporate Membership (Large)</option>
+                    <option value="member_corporate">Member (Corporate)</option>
+                    <option value="ethics_exam">Ethics Exam</option>
+                    <option value="ethical_sales_business">Ethical Sales Business</option>
+                    <option value="master_class">Master Class</option>
+                    <option value="bespoke_webinars">Bespoke Webinars</option>
+                </select>
+                
+                <label for="period">Period</label>
+                <input type="text" id="period" placeholder="Annual" required>
+                
+                <label for="quantity">Quantity</label>
+                <input type="number" id="quantity" placeholder="1" required>
+                
+                <label for="totalCost">Total Cost</label>
+                <input type="text" id="totalCost" placeholder="€100.00" readonly>
+                
+                <button type="button" id="proceedButton">Proceed</button>
+            </form>
+        </div>
+        
+        <!-- Right Section -->
+        <div class="right-section">
+            <form id="paymentForm">
+                <h2>Payment Details</h2>
+                
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" placeholder="" required>
+                
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Email address" required>
+                
+                <label for="phoneNumber">Phone Number</label>
+                <input type="tel" id="phoneNumber" style="width: 100%;" placeholder="(201) 555-0123" required>
+                
+                <div class="card-input-container">
+                    <label for="card-element">Card Details</label>
+                    <div id="card-element"></div> <!-- Stripe card element mounted here -->
+                    <div id="card-errors" role="alert"></div> <!-- Error messages will be shown here -->
+                </div>
+                
+                <div class="card-details-row">
+                    <div class="input-group">
+                        <label for="expirationDate">Expiration Date</label>
+                        <input type="text" id="expirationDate" placeholder="MM / YY" required>
+                        <img src="https://img.icons8.com/ios-filled/50/ff0000/key.png" alt="key icon" class="key-icon">
+                    </div>
+                    <div class="input-group">
+                        <label for="securityCode">Security Code</label>
+                        <input type="text" id="securityCode" placeholder="CVC" required>
+                        <img src="https://img.icons8.com/ios-filled/50/ff0000/key.png" alt="key icon" class="key-icon">
+                    </div>
+                </div>
+                
+                <label for="country">Country</label>
+                <select id="country" required>
+                    <option value="United Kingdom">United Kingdom</option>
+                    <option value="United States">United States</option>
+                    <option value="Canada">Canada</option>
+                </select>
+                
+                <label for="postalCode">Postal Code</label>
+                <input type="text" id="postalCode" placeholder="WS11 1DB" style="width: 90%;" required>
+                
+                <span id="consent">By providing your card information, you allow Kaya| 
+                    Your Digital wellbeing champion to charge your card for future payments in accordance with their terms.
+                </span>
+                
+                <button type="submit" id="payButton">Pay €100.00</button>
+            </form>
+        </div>
+        
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
+    <script>
+        const input = document.querySelector("#phoneNumber");
+        window.intlTelInput(input, {
+            initialCountry: "us",
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js", // for formatting/validation
+        });
+        
+        // Focus on Full Name input field when Proceed button is clicked
+        document.getElementById("proceedButton").addEventListener("click", function() {
+            // Focus on the Full Name input field in the payment section
+            document.getElementById("fullName").focus();
+        });
+    </script>
+    <script src="js/script.js"></script>
+</body>
+<script src="https://js.stripe.com/v3/"></script> <!-- Add Stripe library -->
+</html>
